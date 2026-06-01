@@ -1,0 +1,51 @@
+# openspec/config.yaml
+schema: spec-driven
+
+context: |
+  Tech stack: Python 3.14.4 — fresh project, no dependencies yet.
+  Architecture: Not defined — project is empty.
+  Testing: No test tools installed (pip not available). Set up required.
+  Style: No formatter/linter configured. ruff recommended.
+
+strict_tdd: false
+
+testing:
+  runner:
+    available: false
+    framework: null
+    command: null
+    note: "pip not installed. Install pip, then: pip install pytest"
+  layers:
+    unit: { available: false, tool: null }
+    integration: { available: false, tool: null }
+    e2e: { available: false, tool: null }
+  coverage:
+    available: false
+    command: null
+  quality:
+    linter: { available: false, command: null }
+    type_checker: { available: false, command: null }
+    formatter: { available: false, command: null }
+  recommend: "Install pip via package manager, then: pip install pytest pytest-cov ruff mypy"
+
+rules:
+  proposal:
+    - Include rollback plan for risky changes
+  specs:
+    - Use Given/When/Then for scenarios
+    - Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY)
+  design:
+    - Document architecture decisions with rationale
+  tasks:
+    - Group by phase, use hierarchical numbering
+    - Keep tasks completable in one session
+  apply:
+    - Follow existing code patterns
+    tdd: false
+    test_command: ""
+  verify:
+    test_command: ""
+    build_command: ""
+    coverage_threshold: 0
+  archive:
+    - Warn before merging destructive deltas

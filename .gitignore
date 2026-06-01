@@ -1,0 +1,26 @@
+# Python bytecode and cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# Environment
+.env
+.venv/
+venv/
+env/
+
+# Project data directories (create externally, configure via LLMWIKI_BASE_DIR)
+# inbox/ and wiki/ live outside the repo — set LLMWIKI_BASE_DIR in .env
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
