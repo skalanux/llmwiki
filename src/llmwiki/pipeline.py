@@ -14,10 +14,10 @@ from llmwiki.classifier import ClassifierService
 from llmwiki.config import LLMWikiConfig
 from llmwiki.extractors import get_extractor
 from llmwiki.hash_tracker import HashTracker
-from llmwiki.models import ClassificationResult
+from llmwiki.link_enricher import enrich_all_links
+from llmwiki.models import ClassificationResult, PageData
 from llmwiki.state import State
 from llmwiki.wiki_writer import WikiWriter
-from llmwiki.youtube import enrich_with_transcripts
 
 logger = logging.getLogger(__name__)
 
@@ -113,13 +113,13 @@ class IngestionPipeline:
             extractor = get_extractor(file_path)
             raw_text, metadata = await extractor.extract(file_path)
 
-            # Enrich with YouTube transcripts if links are found
-            enriched = enrich_with_transcripts(raw_text)
+            # Enrich with content from all links (YouTube, GitHub, web)
+            enriched, _fetched = enrich_all_links(raw_text)
             if enriched != raw_text:
                 logger.info(
-                    "Enriched text with YouTube transcript(s) "
+                    "Enriched with content from %d link(s) "
                     "(%d → %d chars)",
-                    len(raw_text), len(enriched),
+                    len(_fetched), len(raw_text), len(enriched),
                 )
 
             logger.info(
@@ -159,10 +159,15 @@ class IngestionPipeline:
             llm_response = await self.classifier.classify(
                 raw_text, state["file_path"],
             )
+            # Convert additional_pages dicts → PageData models
+            extra_pages = [
+                PageData(**ap) for ap in llm_response.additional_pages
+            ]
             classification = ClassificationResult(
                 metadata=metadata,
                 classification=llm_response,
                 wiki_path="",
+                additional_pages=extra_pages,
             )
             logger.info(
                 "Classified %s as '%s'",

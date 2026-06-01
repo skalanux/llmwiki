@@ -28,7 +28,8 @@ JSON object with the following structure:
   "related_pages": [],
   "sections": [
     {"heading": "Section heading", "content": "Section body text"}
-  ]
+  ],
+  "additional_pages": []
 }
 
 Rules:
@@ -38,6 +39,15 @@ Rules:
 - category: One of: technology, concept, tutorial, reference, guide, opinion, other
 - related_pages: Leave empty for now
 - sections: Break the content into structured sections with headings and body
+- additional_pages: If the source text includes **links to external content**
+  (YouTube videos, GitHub repos, web pages), determine whether they cover
+  the SAME topic as the main text or a DIFFERENT topic.
+  * If they cover the SAME topic->include their content in the main
+    page's sections and leave additional_pages empty.
+  * If they cover DIFFERENT topics->create ONE additional_page per
+    distinct topic. Each additional_page has: title, summary, tags,
+    category, sections (same structure as the main page), and source_url
+    (the original URL).
 
 Return ONLY valid JSON — no markdown fences, no extra text."""
 
@@ -196,5 +206,6 @@ class ClassifierService:
             category=parsed.get("category", ""),
             related_pages=parsed.get("related_pages", []),
             sections=parsed.get("sections", []),
+            additional_pages=parsed.get("additional_pages", []),
             raw_response=raw_content,
         )

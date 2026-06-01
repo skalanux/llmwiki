@@ -24,4 +24,5 @@ env/
 *.swp
 *.swo
 *~
-wiki/
+wiki/*
+data/hash.db

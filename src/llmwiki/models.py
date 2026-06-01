@@ -57,6 +57,32 @@ class LLMResponse(BaseModel):
         default="",
         description="Raw JSON string returned by the LLM API",
     )
+    additional_pages: list[dict[str, Any]] = Field(
+        default_factory=list,
+        description=(
+            "Additional wiki pages requested by the LLM for links covering "
+            "different topics. Each dict has title, summary, tags, category, "
+            "sections, and source_url."
+        ),
+    )
+
+
+class PageData(BaseModel):
+    """Data for an additional wiki page generated from linked content.
+
+    Used when a source file contains multiple links covering different
+    topics — the LLM can request separate wiki pages via this model.
+    """
+
+    title: str = Field(description="Title for this additional wiki page")
+    summary: str = Field(description="One-paragraph summary of the linked content")
+    tags: list[str] = Field(default_factory=list, description="Relevant tags")
+    category: str = Field(default="", description="High-level content category")
+    sections: list[dict[str, str]] = Field(
+        default_factory=list,
+        description="Structured sections with heading and body",
+    )
+    source_url: str = Field(default="", description="Original URL that produced this page")
 
 
 class ClassificationResult(BaseModel):
@@ -72,4 +98,8 @@ class ClassificationResult(BaseModel):
     )
     wiki_path: str = Field(
         description="Destination path where the wiki page was written",
+    )
+    additional_pages: list[PageData] = Field(
+        default_factory=list,
+        description="Additional wiki pages generated from linked content",
     )
