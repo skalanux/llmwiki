@@ -17,6 +17,7 @@ from llmwiki.hash_tracker import HashTracker
 from llmwiki.models import ClassificationResult
 from llmwiki.state import State
 from llmwiki.wiki_writer import WikiWriter
+from llmwiki.youtube import enrich_with_transcripts
 
 logger = logging.getLogger(__name__)
 
@@ -111,12 +112,22 @@ class IngestionPipeline:
         try:
             extractor = get_extractor(file_path)
             raw_text, metadata = await extractor.extract(file_path)
+
+            # Enrich with YouTube transcripts if links are found
+            enriched = enrich_with_transcripts(raw_text)
+            if enriched != raw_text:
+                logger.info(
+                    "Enriched text with YouTube transcript(s) "
+                    "(%d → %d chars)",
+                    len(raw_text), len(enriched),
+                )
+
             logger.info(
                 "Extracted %d bytes from %s (hash=%s…)",
                 len(raw_text), file_path.name, metadata.hash[:12],
             )
             return {
-                "raw_text": raw_text,
+                "raw_text": enriched,
                 "metadata": metadata,
                 "hash": metadata.hash,
             }

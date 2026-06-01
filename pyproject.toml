@@ -19,6 +19,7 @@ dependencies = [
 
 [project.optional-dependencies]
 pdf = ["docling>=2.0"]
+youtube = ["youtube-transcript-api>=1.2"]
 
 [project.scripts]
 llmwiki-ingest = "llmwiki.cli:app"
